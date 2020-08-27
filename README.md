@@ -6,8 +6,8 @@ This project remotely deploys Postgres database replication over multiple Kubern
 
 ## How to install
 
-### Prerequisit is Docker install
-clone https://github.com/yurinek/ansible_docker_db_replication_playbook and run 
+Prerequisit is Docker install
+clone https://github.com/yurinek/ansible_docker_db_replication_playbook, add your hosts to inventory_production/myapp_production and run 
 ```hcl
 cd ansible_docker_db_replication_playbook
 ansible-playbook -i inventory_production/myapp_production docker_install.yml
@@ -16,7 +16,6 @@ ansible-playbook -i inventory_production/myapp_production docker_install.yml
 Install k8s on every node (this will not remove existing cluster) <br>
 useful to run if there is something missing, it will install it without touching existing cluster
 ```hcl
-ansible-playbook -i inventory_production/myapp_production kubernetes_install_k8s_install.yml -C
 ansible-playbook -i inventory_production/myapp_production kubernetes_install_k8s_install.yml
 ```
 Install k8s on every node (this will remove existing cluster)
