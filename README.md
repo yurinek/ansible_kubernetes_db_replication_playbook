@@ -6,7 +6,7 @@ This project remotely deploys Postgres database replication over multiple Kubern
 
 ## How to install
 
-Prerequisit is Docker install
+Prerequisit is Docker install <br>
 clone https://github.com/yurinek/ansible_docker_db_replication_playbook, add your hosts to inventory_production/myapp_production and run 
 ```hcl
 cd ansible_docker_db_replication_playbook
