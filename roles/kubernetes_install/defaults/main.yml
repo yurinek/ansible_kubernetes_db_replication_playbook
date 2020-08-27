@@ -1,0 +1,8 @@
+---
+
+k8s_os_user:                    your_k8s_os_user
+k8s_reset_previous_cluster:     "no"
+k8s_worker_node_label:          worker
+# persistent volume path
+k8s_pv_path:                    /mnt/data
+

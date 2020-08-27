@@ -1,0 +1,16 @@
+mkdir /tmp/nodes_to_join
+
+{% for item in k8s_worker_node_names %}
+
+  existing_node=$(kubectl get nodes |grep "^{{ item }} ")
+  echo "existing_node $existing_node"
+
+  if [ -z "$existing_node" ]; then
+    echo "Node {{ item }} is not yet joined, creating join command file for this node..."
+    kubeadm token create --print-join-command > /tmp/nodes_to_join/join_{{ item }}.sh
+    chmod u+x /tmp/nodes_to_join/join_{{ item }}.sh
+  else
+    echo "Node {{ item }} is already joined, will do nothing"
+  fi
+
+{% endfor %}

@@ -1,0 +1,78 @@
+---
+# its recommended to connect ansible to localhost which has kubectl installed which has remote access to k8s server 
+
+
+# Always delete pv before pvc
+- name: destroy | Delete persitent volume from definition file on ansible controller machine
+  k8s:
+    state: absent
+    definition: "{{ lookup('file', k8s_db_replication_files_path ~ '/volume-pv-hostpath.yml') }}"
+    namespace: "{{ k8s_namespace }}"
+
+
+- name: destroy | Delete persitent volume claim from definition file on ansible controller machine
+  k8s:
+    state: absent
+    definition: "{{ lookup('file', k8s_db_replication_files_path ~ '/master-volume-pvc-hostpath.yml') }}"
+    namespace: "{{ k8s_namespace }}"
+  when: k8s_object_to_update == 'deployment'
+
+
+- name: destroy | Delete configmap from definition file on ansible controller machine
+  k8s:
+    state: absent
+    definition: "{{ lookup('file', k8s_db_replication_files_path ~ '/configmap.yml') }}"
+    namespace: "{{ k8s_namespace }}"
+
+
+- name: destroy | Delete secret from definition file on ansible controller machine
+  k8s:
+    state: absent
+    definition: "{{ lookup('file', k8s_db_replication_files_path ~ '/secret.yml') }}"
+    namespace: "{{ k8s_namespace }}"
+
+
+- name: destroy | Delete service-node-port from definition file on ansible controller machine
+  k8s:
+    state: absent
+    definition: "{{ lookup('file', k8s_db_replication_files_path ~ '/master-service-node-port.yml') }}"
+    namespace: "{{ k8s_namespace }}"
+
+
+- name: destroy | Delete service-cluster-ip from definition file on ansible controller machine
+  k8s:
+    state: absent
+    definition: "{{ lookup('file', k8s_db_replication_files_path ~ '/master-service-cluster-ip.yml') }}"
+    namespace: "{{ k8s_namespace }}"
+
+
+- name: destroy | Delete deployment for master database from definition file on ansible controller machine
+  k8s:
+    state: absent
+    definition: "{{ lookup('file', k8s_db_replication_files_path ~ '/master-deployment.yml') }}"
+    namespace: "{{ k8s_namespace }}"
+  when: k8s_object_to_update == 'deployment'
+
+
+- name: destroy | Delete deployment for slave database from definition file on ansible controller machine
+  k8s:
+    state: absent
+    definition: "{{ lookup('file', k8s_db_replication_files_path ~ '/slave-deployment.yml') }}"
+    namespace: "{{ k8s_namespace }}"
+  when: k8s_object_to_update == 'deployment'
+
+
+- name: destroy | Delete statefulset for master database from definition file on ansible controller machine
+  k8s:
+    state: absent
+    definition: "{{ lookup('file', k8s_db_replication_files_path ~ '/master-statefulset.yml') }}"
+    namespace: "{{ k8s_namespace }}"
+  when: k8s_object_to_update == 'statefulset'
+
+
+- name: destroy | Delete statefulset for slave database from definition file on ansible controller machine
+  k8s:
+    state: absent
+    definition: "{{ lookup('file', k8s_db_replication_files_path ~ '/slave-statefulset.yml') }}"
+    namespace: "{{ k8s_namespace }}"
+  when: k8s_object_to_update == 'statefulset'

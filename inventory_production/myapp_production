@@ -1,0 +1,11 @@
+[myapp_production:children]
+myapp_production_master
+myapp_production_worker
+
+[myapp_production_master]
+lm19-1
+
+[myapp_production_worker]
+lm19-2
+lm19-3
+

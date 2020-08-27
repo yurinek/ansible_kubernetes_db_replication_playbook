@@ -1,0 +1,7 @@
+---
+- name: Run DB replication in k8s
+  import_tasks: deploy.yml
+
+
+- name: Destroy DB replication in k8s
+  import_tasks: destroy.yml

@@ -1,0 +1,11 @@
+---
+
+- hosts: all
+  become: yes
+  tasks:
+    - import_role:
+        name:       kubernetes_install
+        tasks_from: k8s_cluster
+
+
+

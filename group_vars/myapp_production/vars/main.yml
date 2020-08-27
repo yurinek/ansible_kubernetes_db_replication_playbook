@@ -1,0 +1,14 @@
+
+---
+# production for k8s task
+
+
+k8s_network:                    10.211.0.0/16
+k8s_master_node_name:           lm19-1
+k8s_worker_node_names:
+    - lm19-2
+    - lm19-3
+
+k8s_db_replication_files_path:  /your/path/to/kubernetes/deployment_or_statefulset_yaml_containing_directory
+k8s_object_to_update:           deployment
+k8s_namespace:                  default

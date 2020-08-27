@@ -1,0 +1,3 @@
+target_user:    your_kubernetes_os_user
+# persistent volume path
+k8s_pv_path:    /mnt/data

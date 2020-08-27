@@ -1,0 +1,12 @@
+---
+
+# its recommended to connect ansible to localhost which has kubectl installed which has remote access to k8s server 
+- hosts: all
+  connection: local
+  vars:
+    # make sure same local python is used which ansible uses for the runs 
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+  tasks:
+    - import_role:
+        name:       kubernetes_db_replication
+        tasks_from: destroy

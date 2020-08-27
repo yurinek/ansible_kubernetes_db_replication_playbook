@@ -1,0 +1,17 @@
+
+{% for item in k8s_worker_node_names %}
+
+  existing_node=$(kubectl get nodes |grep "^{{ item }} ")
+  echo "existing_node $existing_node"
+
+  existing_worker_label=$(kubectl get nodes |grep "^{{ item }} " |awk {'print $3'} |grep worker)
+  echo "existing_worker_label $existing_worker_label"
+
+  if [ ! -z "$existing_node" ] && [ -z "$existing_worker_label" ]; then
+    echo "Node {{ item }} is already joined but not yet labeled, creating label for this node..."
+    kubectl label node {{ item }} node-role.kubernetes.io/{{ k8s_worker_node_label }}={{ k8s_worker_node_label }}
+  else 
+    echo "Node {{ item }} is eather not yet joined or already labeled, will do nothing"
+  fi
+
+{% endfor %}

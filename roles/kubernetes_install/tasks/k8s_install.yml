@@ -1,0 +1,108 @@
+---
+# runs on all Kubernetes nodes
+
+
+- name: install | Reset previous install
+  command: kubeadm reset -f
+  ignore_errors: yes
+  when: k8s_reset_previous_cluster == "yes"
+
+
+- name: install | Install bridge-utils to clean up previous k8s network
+  apt: 
+    name: bridge-utils
+    state: present
+    update_cache: yes
+  when: k8s_reset_previous_cluster == "yes"
+
+
+# previous k8s install should be cleaned up on master and all nodes
+- name: install | Delete previous files
+  file:
+    path: "{{ files }}"
+    state: absent
+  vars:
+    files:
+      - ~/.kube
+      - /root/.kube
+      - /etc/kubernetes
+      - /var/lib/etcd
+      - /var/lib/cni
+      - /run/flannel
+      - /etc/cni
+  ignore_errors: yes
+  when: k8s_reset_previous_cluster == "yes"
+
+ 
+- name: install | Reset cni0 network of previous k8s installation
+  shell: | 
+        ifconfig cni0 down;
+        brctl delbr cni0
+  ignore_errors: yes
+  when: k8s_reset_previous_cluster == "yes"
+
+
+# Kubelet will not start if the system has swap enabled, so we are disabling swap
+- name: install | Remove swapfile from /etc/fstab
+  mount:
+    name: "{{ item }}"
+    fstype: swap
+    state: absent
+  with_items:
+    - swap
+    - none
+
+
+- name: install | Disable swap
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+
+
+- name: install | Add an apt signing key for Kubernetes
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+
+
+- name: install | Adding apt repository for Kubernetes
+  apt_repository:
+    repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+    state: present
+    # kubernetes.list will be created under /etc/apt/sources.list.d
+    filename: kubernetes
+
+
+- name: install | Install Kubernetes binaries
+  apt: 
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+      - kubelet 
+      - kubeadm 
+      - kubectl
+  # its idempotent but for performance reasons, lets make it conditional
+  when: k8s_reset_previous_cluster == "yes"
+
+
+- name: install | Configure node ip
+  lineinfile:
+    path: /etc/default/kubelet
+    line: KUBELET_EXTRA_ARGS=--node-ip={{ ansible_default_ipv4.address }}
+    create: yes
+        
+
+- name: install | Restart kubelet
+  service:
+    name: kubelet
+    daemon_reload: yes
+    state: restarted
+  when: k8s_reset_previous_cluster == true
+  notify: start docker
+
+
+- name: install | Create persistent volume directories
+  file:
+    path: "{{ k8s_pv_path }}"
+    state: directory

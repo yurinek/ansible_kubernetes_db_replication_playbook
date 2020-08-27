@@ -1,0 +1,12 @@
+---
+- name: Install Kubernetes binaries
+  import_tasks: k8s_install.yml
+  tags:
+    - apt
+
+
+- name: Configure Kubernetes cluster
+  import_tasks: k8s_cluster.yml
+  tags:
+    - kubectl
+
